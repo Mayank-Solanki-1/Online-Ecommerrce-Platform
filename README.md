@@ -12,22 +12,6 @@ A full-featured, production-ready e-commerce platform built with Java Servlets, 
 
 ---
 
-## 📋 Table of Contents
-
-- [Features](#-features)
-- [Technology Stack](#-technology-stack)
-- [Prerequisites](#-prerequisites)
-- [Installation & Setup](#-installation--setup)
-- [Project Structure](#-project-structure)
-- [User Roles & Access](#-user-roles--access)
-- [Key Features Explained](#-key-features-explained)
-- [API Endpoints](#-api-endpoints)
-- [Security Features](#-security-features)
-- [Troubleshooting](#-troubleshooting)
-- [Future Enhancements](#-future-enhancements)
-
----
-
 ## ✨ Features
 
 ### 🔐 Authentication & Authorization
@@ -156,7 +140,6 @@ Before you begin, ensure you have:
 - **Apache Tomcat 9+**
 - **Maven** (for dependency management)
 - **IDE** (IntelliJ IDEA or Eclipse recommended)
-- **Web Browser** (Chrome, Firefox, or Safari)
 
 ---
 
@@ -414,18 +397,6 @@ ecommerce-enterprise/
 - Supported formats: JPG, PNG, GIF
 - Maximum file size: 10MB
 - Default fallback image for products without images
-- Image preview in product listings
-
-**Implementation**:
-```java
-@MultipartConfig
-public class ProductServlet extends HttpServlet {
-    // Handles file upload with Part API
-    Part imagePart = req.getPart("image");
-    String fileName = imagePart.getSubmittedFileName();
-    imagePart.write(uploadPath + File.separator + fileName);
-}
-```
 
 ### 2. Advanced Search Functionality
 
@@ -437,12 +408,6 @@ public class ProductServlet extends HttpServlet {
 - Product name matching
 - Instant results display
 
-**Implementation**:
-- Search endpoint: `/product/search`
-- Suggestions endpoint: `/product/suggest`
-- Database query with LIKE operator
-- JSON response with Gson
-
 ### 3. Comprehensive Validation
 
 **Client-Side Validation** (JavaScript):
@@ -452,18 +417,6 @@ public class ProductServlet extends HttpServlet {
 - Phone number validation (10 digits)
 - Pincode validation (6 digits)
 - Immediate user feedback
-
-**Server-Side Validation** (Java):
-```java
-public class ValidationUtil {
-    // Email regex validation
-    // Phone: exactly 10 digits
-    // Pincode: exactly 6 digits
-    // Price: 0 < price < 1,000,000
-    // Stock: 0 <= stock < 100,000
-    // Input sanitization for XSS prevention
-}
-```
 
 ### 4. Transaction Management
 
@@ -476,21 +429,6 @@ public class ValidationUtil {
 - Rollback on failure
 - Database integrity maintained
 
-**Implementation**:
-```java
-conn.setAutoCommit(false);
-try {
-    // 1. Update user shipping info
-    // 2. Create order
-    // 3. Add order items
-    // 4. Reduce product stock
-    conn.commit();
-} catch (SQLException e) {
-    conn.rollback();
-    throw e;
-}
-```
-
 ### 5. Logging System
 
 **Logback Configuration**:
@@ -500,21 +438,6 @@ try {
 - 30-day log retention
 - DEBUG level for application code
 - INFO level for libraries
-
-**Log Files**:
-- Location: `logs/ecommerce.log`
-- Format: `yyyy-MM-dd HH:mm:ss [thread] LEVEL class - message`
-- Automatic rotation: `ecommerce-yyyy-MM-dd.log`
-
-### 6. Modern UI/UX
-
-**Design System**:
-- **Tailwind CSS**: Utility-first styling for cart and product details
-- **Bootstrap 5**: Component-based design for admin and seller panels
-- **Responsive Design**: Mobile-first approach
-- **Dark Sidebar**: Professional navigation for buyers
-- **Gradient Animations**: Modern landing page
-- **Chart.js Integration**: Visual analytics
 
 **Key UI Components**:
 - Animated search bar with smooth transitions
@@ -580,23 +503,10 @@ try {
 - **Role-Based Access Control**: Servlet filter enforcement
 - **Admin Protection**: Secret key requirement
 
-### Input Security
-- **SQL Injection Prevention**: Prepared statements everywhere
-- **XSS Prevention**: Input sanitization with ValidationUtil
-- **File Upload Security**: 
-  - File type validation
-  - Size limits (10MB per file, 20MB per request)
-  - Secure file naming
-- **CSRF Protection**: Session-based validation
 
 ### Data Validation
 - **Client-Side**: JavaScript validation for immediate feedback
 - **Server-Side**: Comprehensive validation in ValidationUtil
-- **Database Constraints**: 
-  - NOT NULL constraints
-  - UNIQUE constraints
-  - Foreign key relationships
-  - ENUM types for roles and statuses
 
 ### Error Handling
 - **Custom Error Page**: User-friendly error messages
@@ -606,224 +516,18 @@ try {
 
 ---
 
-## 🐛 Troubleshooting
-
-### Common Issues
-
-#### 1. Database Connection Failed
-**Symptoms**: Application won't start, connection errors in logs
-
-**Solutions**:
-```bash
-# Verify MySQL is running
-sudo service mysql status
-
-# Check credentials in application.properties
-# Ensure database exists
-mysql -u root -p
-> SHOW DATABASES;
-> USE ecommerce_db;
-
-# Verify MySQL port (default: 3306)
-netstat -an | grep 3306
-```
-
-#### 2. Image Upload Not Working
-**Symptoms**: Images not saving, file not found errors
-
-**Solutions**:
-```bash
-# Create images directory
-mkdir -p src/main/webapp/product_images
-
-# Check file permissions
-chmod 755 src/main/webapp/product_images
-
-# Verify multipart configuration in web.xml
-# Check max file size limits
-```
-
-#### 3. Port Already in Use
-**Symptoms**: Tomcat won't start, port 8080 busy
-
-**Solutions**:
-```bash
-# Find process using port 8080
-lsof -i :8080
-
-# Kill the process
-kill -9 <PID>
-
-# Or change Tomcat port in server.xml
-# Change Connector port="8080" to port="8090"
-```
-
-#### 4. ClassNotFoundException
-**Symptoms**: Missing class errors, NoClassDefFoundError
-
-**Solutions**:
-```bash
-# Clean and rebuild project
-mvn clean install
-
-# Reload Maven dependencies in IDE
-# IntelliJ: Right-click pom.xml → Maven → Reload
-# Eclipse: Right-click project → Maven → Update
-
-# Check all dependencies are downloaded
-ls ~/.m2/repository
-```
-
-#### 5. 404 Error on Pages
-**Symptoms**: Page not found errors
-
-**Solutions**:
-- Check servlet URL mappings in `@WebServlet` annotations
-- Verify context path: `/ecommerce-enterprise`
-- Ensure JSP files are in `/WEB-INF/jsp/` directory
-- Check web.xml configuration
-- Verify Tomcat deployment configuration
-
-#### 6. Search Not Working
-**Symptoms**: No search results, autocomplete not showing
-
-**Solutions**:
-- Check browser console for JavaScript errors
-- Verify jQuery is loaded
-- Check AJAX endpoint URL
-- Ensure database has products with names
-- Check network tab for API responses
-
-#### 7. Image Not Displaying
-**Symptoms**: Broken image icon, 404 on image URLs
-
-**Solutions**:
-- Verify image exists in `product_images/` directory
-- Check file permissions
-- Use browser DevTools to inspect image URL
-- Verify contextPath in JSP
-- Check default.jpg fallback exists
-
----
 
 ## 🚀 Future Enhancements
 
-### Planned Features
-- [ ] **Email Notifications**
-  - Order confirmation emails
-  - Shipping updates
-  - Password reset functionality
-  
-- [ ] **Product Reviews & Ratings**
-  - 5-star rating system
-  - Written reviews
-  - Review moderation
-  
-- [ ] **Advanced Search & Filters**
-  - Category-based filtering
-  - Price range filters
-  - Sort by price, popularity, rating
-  - Multi-attribute search
-  
-- [ ] **Payment Gateway Integration**
-  - Razorpay integration
-  - Stripe integration
-  - PayPal support
-  - Payment status webhooks
-  
-- [ ] **Multi-Language Support**
-  - i18n implementation
-  - Language selector
-  - RTL support
-  
-- [ ] **Enhanced Image Management**
-  - Multiple images per product
-  - Image galleries
-  - Image optimization
-  - CDN integration
-  
-- [ ] **Coupon & Discount System**
-  - Percentage discounts
-  - Fixed amount coupons
-  - Minimum order requirements
-  - Expiration dates
-  
-- [ ] **Real-Time Chat Support**
-  - WebSocket implementation
-  - Live customer support
-  - Chatbot integration
-  
-- [ ] **Mobile Application**
-  - React Native app
-  - Push notifications
-  - Offline support
-  
-- [ ] **Advanced Analytics**
-  - Google Analytics integration
-  - Custom dashboard metrics
-  - Revenue forecasting
-  - Customer behavior tracking
+- [ ] Email notifications
+- [ ] Product reviews and ratings
+- [ ] Advanced search and filters
+- [ ] Payment gateway integration (Razorpay, Stripe)
+- [ ] Multi-language support
+- [ ] Product image upload
+- [ ] Coupon and discount system
+- [ ] Real-time chat support
 
-### Performance Optimizations
-- [ ] Implement caching (Redis)
-- [ ] Database query optimization
-- [ ] Lazy loading for images
-- [ ] CDN for static assets
-- [ ] Compression middleware
-
-### Security Enhancements
-- [ ] Two-factor authentication
-- [ ] OAuth 2.0 integration
-- [ ] Rate limiting
-- [ ] CAPTCHA for forms
-- [ ] Security headers (HSTS, CSP)
-
----
-
-## 📝 Testing
-
-### Manual Testing Checklist
-
-**Authentication:**
-- [ ] Register as buyer with valid data
-- [ ] Register as seller with valid data
-- [ ] Register as admin with correct secret key
-- [ ] Login with correct credentials
-- [ ] Login fails with wrong credentials
-- [ ] Session persists across pages
-- [ ] Logout works correctly
-
-**Product Management:**
-- [ ] Add product with image
-- [ ] Add product without image (uses default)
-- [ ] Edit product and update image
-- [ ] Edit product without changing image
-- [ ] Delete product (soft delete)
-- [ ] View product list with images
-- [ ] Search products by name
-
-**Shopping Flow:**
-- [ ] Browse products
-- [ ] View product details
-- [ ] Add product to cart
-- [ ] Update cart quantity
-- [ ] Remove from cart
-- [ ] Add to wishlist
-- [ ] Remove from wishlist
-- [ ] Proceed to checkout
-- [ ] Complete payment (COD)
-- [ ] Complete payment (Card)
-- [ ] View order history
-- [ ] View invoice
-
-**Admin Functions:**
-- [ ] View dashboard statistics
-- [ ] View all users
-- [ ] Delete user
-- [ ] View all products
-- [ ] Delete product
-- [ ] View all orders
-- [ ] Update order status
 
 ---
 
@@ -831,106 +535,18 @@ ls ~/.m2/repository
 
 This project is licensed under the MIT License.
 
-```
-MIT License
-
-Copyright (c) 2025 MyStore Team
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```
-
 ---
 
-## 🙏 Acknowledgments
-
-- **Bootstrap** team for the excellent UI framework
-- **Tailwind CSS** for utility-first styling
-- **Apache Tomcat** community
-- **MySQL** development team
-- **HikariCP** for high-performance connection pooling
-- **Chart.js** for data visualization
-- **Font Awesome** for icon library
-- All contributors and testers
-
----
 
 ## 📞 Support & Contact
 
-For issues, questions, or contributions:
-
-- **Create an Issue**: [GitHub Issues](https://github.com/your-repo/issues)
+For issues, questions, or contribution
 - **Email**: support@mystore.com
-- **Documentation**: Check `/docs` folder for detailed guides
 
 ---
 
-## 🌟 Project Highlights
 
-### What Makes This Project Stand Out?
 
-1. **Production-Ready Architecture**
-   - Layered architecture (DAO, Service, Servlet)
-   - Connection pooling with HikariCP
-   - Transaction management
-   - Comprehensive error handling
-
-2. **Modern UI/UX**
-   - Tailwind CSS for modern components
-   - Bootstrap 5 for responsive design
-   - Smooth animations and transitions
-   - Mobile-first approach
-
-3. **Advanced Features**
-   - Live search with autocomplete
-   - Image upload and management
-   - Real-time logging
-   - Sales analytics with charts
-   - Comprehensive validation
-
-4. **Security Best Practices**
-   - Password hashing
-   - Prepared statements
-   - Input sanitization
-   - Role-based access control
-   - Session security
-
-5. **Comprehensive Documentation**
-   - Detailed README
-   - Code comments
-   - API documentation
-   - Troubleshooting guide
-
----
-
-## 📊 Project Statistics
-
-- **Lines of Code**: ~15,000+
-- **Java Classes**: 40+
-- **JSP Pages**: 25+
-- **Database Tables**: 6
-- **Features**: 50+
-- **User Roles**: 3
-- **API Endpoints**: 30+
-
----
 
 **Built with ❤️ by Team MyStore**
-
-*Last Updated: December 2024*
 
